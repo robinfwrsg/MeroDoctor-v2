@@ -68,7 +68,7 @@ const MEDICINES = {
 const DOCTORS = [
     { 
         id: 1, 
-        name: 'Dr. Anjali Sharma', 
+        name: 'Dr. Romisha Shrestha', 
         specialty: 'General Physician', 
         rating: 4.8, 
         available: true, 
@@ -76,7 +76,7 @@ const DOCTORS = [
     },
     { 
         id: 2, 
-        name: 'Dr. Rajesh Thapa', 
+        name: 'Dr. Tapasya Adhikari', 
         specialty: 'Cardiologist', 
         rating: 4.9, 
         available: true, 
@@ -1263,4 +1263,5 @@ console.log('');
 if (DEV_MODE) {
     console.log('%cDeveloper Mode Enabled', 'color: #10b981; font-weight: bold;');
     console.log('Type viewState() to see current application state');
+
 }
