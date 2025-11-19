@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeroDoctor - Your Health Simplified</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+<!-- Header -->
+<header class="header">
+    <div class="container header-content">
+        <div class="logo-section">
+            <!-- Replace SVG with your logo -->
+            <img src="logo.jpg" alt="MeroDoctor Logo" class="logo-image">
+
+            <h1 class="site-title">MeroDoctor</h1>
+        </div>
+            
+            <div class="header-actions">
+                <button class="icon-btn" onclick="openHistory()" title="History">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </button>
+                <button class="btn-subscribe" onclick="openSubscriptionModal()">
+                    <span id="subscriptionBtnText">Subscribe</span>
+                </button>
+                <button class="icon-btn" onclick="toggleCart()" title="Cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Disclaimer Banner -->
+    <div class="disclaimer-banner">
+        <div class="container disclaimer-content">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div>
+                <strong>Prototype Demo:</strong> This is a demonstration only and not a substitute for professional medical advice. Always consult a licensed healthcare provider for medical concerns.
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-text">
+                <h2 class="hero-title">
+                    Your Health, <span class="gradient-text">Simplified</span>
+                </h2>
+                <p class="hero-subtitle">
+                    Describe your symptoms and get instant medicine recommendations or connect with top doctors
+                </p>
+            </div>
+
+            <!-- Symptom Input Card -->
+            <div class="symptom-card">
+                <label class="input-label">What symptoms are you experiencing?</label>
+                
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="symptomInput" 
+                        class="symptom-input" 
+                        placeholder="e.g., fever, headache, cough..."
+                        onkeypress="if(event.key==='Enter') analyzeSymptoms()"
+                    >
+                    <button class="btn-search" onclick="analyzeSymptoms()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <span>Analyze</span>
+                    </button>
+                </div>
+
+                <div class="quick-symptoms" id="quickSymptoms"></div>
+                <div class="selected-symptoms" id="selectedSymptoms"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section container" id="resultsSection" style="display: none;">
+        <!-- Urgent Consultation Alert -->
+        <div id="urgentAlert" class="urgent-alert" style="display: none;">
+            <div class="urgent-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                    <h3 class="urgent-title">Urgent: Consult a Doctor</h3>
+                    <p class="urgent-text">Based on your symptoms, we strongly recommend consulting with a healthcare professional immediately.</p>
+                    <div class="doctors-grid" id="urgentDoctors"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medicine Recommendations -->
+        <div id="recommendationsSection" style="display: none;">
+            <h3 class="section-title">Recommended Medicines</h3>
+            <div class="medicines-grid" id="medicinesGrid"></div>
+        </div>
+    </section>
+
+    <!-- Available Doctors Section -->
+    <section class="doctors-section container">
+        <h3 class="section-title">Available Doctors</h3>
+        <div class="doctors-grid" id="doctorsGrid"></div>
+    </section>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-overlay" onclick="toggleCart()"></div>
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3 class="cart-title">Your Cart</h3>
+                <button class="icon-btn" onclick="toggleCart()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="cart-items" id="cartItems">
+                <p class="empty-cart">Your cart is empty</p>
+            </div>
+
+            <div class="cart-footer" id="cartFooter" style="display: none;">
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">Rs 0.00</span>
+                    </div>
+                    <div class="summary-row discount-row" id="discountRow" style="display: none;">
+                        <span>Discount <span id="discountLabel"></span></span>
+                        <span id="discount">- Rs 0.00</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total</span>
+                        <span id="total">Rs 0.00</span>
+                    </div>
+                </div>
+                <button class="btn-checkout" onclick="proceedToCheckout()">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Modal -->
+    <div class="modal" id="subscriptionModal">
+        <div class="modal-overlay" onclick="closeSubscriptionModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Choose Your Plan</h3>
+                <button class="icon-btn" onclick="closeSubscriptionModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="plans-grid">
+                <div class="plan-card" onclick="selectSubscription('basic')">
+                    <h4 class="plan-name">Basic</h4>
+                    <p class="plan-price">Rs 300<span>/month</span></p>
+                    <ul class="plan-features">
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>7% discount per purchase</span>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Max Rs 100 discount per order</span>
+                        </li>
+                    </ul>
+                    <button class="btn-select">Select Basic</button>
+                </div>
+
+                <div class="plan-card plan-popular" onclick="selectSubscription('premium')">
+                    <div class="popular-badge">POPULAR</div>
+                    <h4 class="plan-name">Premium</h4>
+                    <p class="plan-price premium-price">Rs 1000<span>/month</span></p>
+                    <ul class="plan-features">
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>15% discount per purchase</span>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Max Rs 200 discount per order</span>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>15% off doctor appointments</span>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Max Rs 150 appointment discount</span>
+                        </li>
+                    </ul>
+                    <button class="btn-select btn-premium">Select Premium</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div class="modal" id="appointmentModal">
+        <div class="modal-overlay" onclick="closeAppointmentModal()"></div>
+        <div class="modal-content appointment-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Book Appointment</h3>
+                <button class="icon-btn" onclick="closeAppointmentModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="appointment-details" id="appointmentDetails"></div>
+
+            <div class="appointment-form">
+                <div class="form-group">
+                    <label>Select Date</label>
+                    <input type="date" id="appointmentDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Select Time</label>
+                    <select id="appointmentTime" class="form-input">
+                        <option>9:00 AM</option>
+                        <option>10:00 AM</option>
+                        <option>11:00 AM</option>
+                        <option>2:00 PM</option>
+                        <option>3:00 PM</option>
+                        <option>4:00 PM</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="appointment-summary" id="appointmentSummary"></div>
+
+            <button class="btn-confirm" onclick="confirmAppointment()">Confirm Appointment</button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+        <div class="modal-overlay" onclick="closeHistory()"></div>
+        <div class="modal-content history-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">My History</h3>
+                <button class="icon-btn" onclick="closeHistory()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="history-content" id="historyContent">
+                <p class="empty-history">No history yet</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-overlay" onclick="closeCheckoutModal()"></div>
+        <div class="modal-content checkout-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Checkout</h3>
+                <button class="icon-btn" onclick="closeCheckoutModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="checkout-content">
+                <h4 class="checkout-section-title">Order Summary</h4>
+                <div class="checkout-items" id="checkoutItems"></div>
+
+                <div class="checkout-summary" id="checkoutSummary"></div>
+
+                <h4 class="checkout-section-title" style="margin-top: 1.5rem;">Delivery Information</h4>
+                <form class="checkout-form" id="checkoutForm">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" class="form-input" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" class="form-input" id="customerPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Address *</label>
+                        <textarea class="form-input" id="customerAddress" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea class="form-input" id="orderNotes" rows="2" placeholder="Any special instructions..."></textarea>
+                    </div>
+                </form>
+
+                <div class="payment-methods">
+                    <h4 class="checkout-section-title">Payment Method</h4>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <span>Cash on Delivery</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="esewa">
+                            <span>eSewa (Coming Soon)</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="khalti">
+                            <span>Khalti (Coming Soon)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-confirm" onclick="confirmOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </div>
+                        <h3>MeroDoctor</h3>
+                    </div>
+                    <p class="footer-desc">Your trusted healthcare companion in Nepal</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Medicines</a></li>
+                        <li><a href="#">Doctors</a></li>
+                        <li><a href="#">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li>📧 support@merodoctor.com</li>
+                        <li>📞 +977-1-4567890</li>
+                        <li>📍 Kathmandu, Nepal</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2024 MeroDoctor. Prototype Demo - Not for Medical Use.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
